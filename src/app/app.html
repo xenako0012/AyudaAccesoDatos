@@ -1,0 +1,33 @@
+<header class="cabecera">
+  <div class="contenedor cabecera__interior">
+    <a class="marca" routerLink="/" aria-label="Ir al inicio">
+      <span class="marca__icono" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M4 19V6a2 2 0 0 1 2-2h13v13H6.5a2.5 2.5 0 0 0 0 5H19"/>
+          <path d="M8 8h8"/>
+        </svg>
+      </span>
+      <span class="marca__texto">Repaso <strong>AD</strong><small>Acceso a Datos · DAM 2º</small></span>
+    </a>
+
+    <nav class="navegacion" aria-label="Navegación principal">
+      <a routerLink="/" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="activo">Inicio</a>
+      <a routerLink="/temario" routerLinkActive="activo">Temario</a>
+      <a routerLink="/test" routerLinkActive="activo">Test</a>
+      <a routerLink="/flashcards" routerLinkActive="activo">Flashcards</a>
+      <a routerLink="/ejercicios" routerLinkActive="activo">Ejercicios</a>
+      <a routerLink="/glosario" routerLinkActive="activo">Glosario</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <router-outlet />
+</main>
+
+<footer class="pie">
+  <div class="contenedor pie__interior">
+    <p>Hecho con <span class="gradiente-texto">Angular</span> para repasar <strong>Acceso a Datos (0486)</strong> · Curso {{ anio }}</p>
+    <p class="pie__nota">Tu progreso se guarda solo en este navegador (localStorage). Nada sale de tu equipo.</p>
+  </div>
+</footer>

@@ -1,0 +1,70 @@
+<div class="contenedor margen-pagina flashcards">
+  <h1 class="titulo-pagina aparecer">Flashcards</h1>
+  <p class="subtitulo-pagina">
+    Pulsa la tarjeta para ver la respuesta. Marca las que ya dominas con «Me la sé»
+    y filtra después solo las pendientes para apretar el repaso.
+  </p>
+
+  <div class="controles aparecer">
+    <div class="controles__filtros" role="group" aria-label="Filtrar por unidad">
+      <button type="button" class="chip-filtro" [class.seleccionado]="filtro() === 'todas'" (click)="elegirFiltro('todas')">Todas</button>
+      <button type="button" class="chip-filtro chip-filtro--cyan" [class.seleccionado]="filtro() === 'ut1'" (click)="elegirFiltro('ut1')">UT1 · Ficheros</button>
+      <button type="button" class="chip-filtro chip-filtro--violet" [class.seleccionado]="filtro() === 'ut2'" (click)="elegirFiltro('ut2')">UT2 · JDBC</button>
+    </div>
+
+    <button type="button" class="chip-filtro chip-filtro--amber" [class.seleccionado]="soloPendientes()" (click)="alternarPendientes()">
+      Solo pendientes
+    </button>
+  </div>
+
+  @if (baraja().length === 0) {
+    <div class="tarjeta vacio aparecer">
+      <p>🎉 No quedan tarjetas pendientes con este filtro.</p>
+      <button type="button" class="boton boton--fantasma" (click)="alternarPendientes()">
+        Ver todas de nuevo
+      </button>
+    </div>
+  } @else if (cartaActual(); as carta) {
+    <div class="mesa aparecer">
+      <div class="mesa__estado">
+        <span class="chip" [class.chip--cyan]="carta.unidad === 'ut1'" [class.chip--violet]="carta.unidad === 'ut2'">
+          {{ carta.unidad | uppercase }}
+        </span>
+        <span class="chip">{{ carta.bloque }}</span>
+        <span class="mesa__contador">Tarjeta {{ indice() + 1 }} / {{ baraja().length }}</span>
+        @if (esConocida(carta.id)) {
+          <span class="chip chip--green">✓ Dominada</span>
+        }
+      </div>
+
+      <button type="button" class="carta" (click)="girar()"
+              [attr.aria-label]="girada() ? 'Ver la pregunta' : 'Ver la respuesta'">
+        <div class="carta__interior" [class.carta__interior--girada]="girada()">
+          <div class="carta__cara carta__frente">
+            <span class="carta__etiqueta">Pregunta</span>
+            <p>{{ carta.pregunta }}</p>
+            <span class="carta__pista">Pulsa para girar ⟳</span>
+          </div>
+          <div class="carta__cara carta__dorso">
+            <span class="carta__etiqueta">Respuesta</span>
+            <p>{{ carta.respuesta }}</p>
+          </div>
+        </div>
+      </button>
+
+      <div class="mesa__acciones">
+        <button type="button" class="boton boton--fantasma" (click)="anterior()" [disabled]="indice() === 0">← Anterior</button>
+        <button type="button" class="boton boton--peligro" (click)="marcarConocida(false)">Aún no</button>
+        <button type="button" class="boton boton--exito" (click)="marcarConocida(true)">Me la sé ✓</button>
+        <button type="button" class="boton boton--fantasma" (click)="siguiente()" [disabled]="indice() + 1 >= baraja().length">Siguiente →</button>
+      </div>
+
+      <div class="mesa__progreso">
+        <div class="mesa__barra" aria-hidden="true">
+          <div class="mesa__relleno" [style.width.%]="(conocidasEnBaraja() / baraja().length) * 100"></div>
+        </div>
+        <span>Dominadas: {{ conocidasEnBaraja() }} de {{ baraja().length }}</span>
+      </div>
+    </div>
+  }
+</div>

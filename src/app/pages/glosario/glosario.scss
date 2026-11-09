@@ -1,0 +1,87 @@
+.glosario { max-width: 860px; }
+
+.herramientas {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 0.8rem;
+}
+
+.buscador {
+  flex: 1;
+  min-width: 240px;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.15rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--card);
+
+  input {
+    flex: 1;
+    border: 0;
+    outline: none;
+    background: none;
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 0.95rem;
+    padding: 0.65rem 0;
+  }
+  input::placeholder { color: var(--faint); }
+}
+
+.filtros { display: flex; gap: 0.5rem; }
+
+.chip-filtro {
+  border: 1px solid var(--border);
+  background: rgba(148, 163, 184, 0.05);
+  color: var(--muted);
+  border-radius: 999px;
+  padding: 0.42rem 1rem;
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover { color: var(--text); border-color: var(--border-strong); }
+  &.seleccionado { color: var(--text); background: rgba(148, 163, 184, 0.14); }
+  &--cyan.seleccionado {
+    color: #7deeff;
+    border-color: rgba(34, 211, 238, 0.5);
+    background: rgba(34, 211, 238, 0.1);
+  }
+  &--violet.seleccionado {
+    color: #c4b5fd;
+    border-color: rgba(167, 139, 250, 0.5);
+    background: rgba(167, 139, 250, 0.1);
+  }
+}
+
+.recuento { color: var(--faint); font-size: 0.8rem; margin: 0 0 1rem; }
+
+.lista { display: grid; gap: 0.7rem; }
+
+.termino {
+  padding: 1rem 1.3rem;
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    margin-bottom: 0.3rem;
+  }
+
+  h2 { font-size: 1rem; font-weight: 800; }
+  p { margin: 0; color: var(--muted); font-size: 0.88rem; }
+}
+
+.vacio {
+  padding: 2rem;
+  text-align: center;
+  color: var(--muted);
+
+  p { margin: 0; }
+}

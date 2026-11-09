@@ -1,0 +1,140 @@
+<div class="contenedor margen-pagina quiz">
+
+  <!-- ===================== CONFIGURACIÓN ===================== -->
+  @if (fase() === 'config') {
+    <h1 class="titulo-pagina aparecer">Test de repaso</h1>
+    <p class="subtitulo-pagina">
+      Preguntas de opción múltiple con corrección y explicación al instante.
+      Elige el ámbito y la longitud del test.
+    </p>
+
+    <div class="tarjeta config aparecer">
+      <div class="config__grupo">
+        <h2 class="config__etiqueta">Ámbito</h2>
+        <div class="config__opciones">
+          <button type="button" class="opcion-ambito" [class.seleccionado]="ambito() === 'todas'" (click)="elegirAmbito('todas')">
+            <strong>Todo mezclado</strong>
+            <span>UT1 + UT2 barajadas: examen completo</span>
+          </button>
+          <button type="button" class="opcion-ambito opcion-ambito--cyan" [class.seleccionado]="ambito() === 'ut1'" (click)="elegirAmbito('ut1')">
+            <strong>UT1 · Ficheros</strong>
+            <span>Texto, binarios, RAF, serialización y XML</span>
+          </button>
+          <button type="button" class="opcion-ambito opcion-ambito--violet" [class.seleccionado]="ambito() === 'ut2'" (click)="elegirAmbito('ut2')">
+            <strong>UT2 · JDBC y MySQL</strong>
+            <span>CRUD, transacciones, pools y patrones</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="config__grupo">
+        <h2 class="config__etiqueta">Número de preguntas <span class="config__enambito">({{ disponibles().length }} en este ámbito)</span></h2>
+        <div class="config__cantidades">
+          @for (n of [10, 20]; track n) {
+            <button type="button" class="chip-cantidad" [class.seleccionado]="cantidad() === n"
+                    [disabled]="n > maxPreguntas()" (click)="cantidad.set(n)">
+              {{ n }}
+            </button>
+          }
+          <button type="button" class="chip-cantidad" [class.seleccionado]="cantidad() === maxPreguntas()"
+                  (click)="cantidad.set(maxPreguntas())">
+            Todas ({{ maxPreguntas() }})
+          </button>
+        </div>
+      </div>
+
+      <button type="button" class="boton boton--primario config__empezar" (click)="empezar()">
+        Empezar test →
+      </button>
+    </div>
+  }
+
+  <!-- ===================== JUGANDO ===================== -->
+  @if (fase() === 'jugando' && preguntaActual(); as p) {
+    <div class="jugar aparecer" [attr.data-indice]="indice()">
+      <header class="jugar__cabecera">
+        <span class="chip" [class.chip--cyan]="p.unidad === 'ut1'" [class.chip--violet]="p.unidad === 'ut2'">
+          {{ p.unidad | uppercase }} · {{ p.tema }}
+        </span>
+        <span class="jugar__progreso">Pregunta {{ indice() + 1 }} de {{ preguntas().length }}</span>
+      </header>
+      <div class="jugar__barra" aria-hidden="true">
+        <div class="jugar__relleno" [style.width.%]="((indice() + 1) / preguntas().length) * 100"></div>
+      </div>
+
+      <article class="tarjeta pregunta">
+        <h2 class="pregunta__enunciado">{{ p.enunciado }}</h2>
+
+        <div class="pregunta__opciones" role="group" aria-label="Opciones de respuesta">
+          @for (op of p.opciones; track op; let i = $index) {
+            <button type="button" class="opcion"
+                    [class.opcion--correcta]="seleccion() !== null && i === p.correcta"
+                    [class.opcion--incorrecta]="seleccion() === i && i !== p.correcta"
+                    [class.opcion--apagada]="seleccion() !== null && i !== p.correcta && seleccion() !== i"
+                    [disabled]="seleccion() !== null"
+                    (click)="elegirOpcion(i)">
+              <span class="opcion__letra">{{ letra(i) }}</span>
+              <span class="opcion__texto">{{ op }}</span>
+              @if (seleccion() !== null && i === p.correcta) {
+                <span class="opcion__marca" aria-hidden="true">✓</span>
+              }
+              @if (seleccion() === i && i !== p.correcta) {
+                <span class="opcion__marca" aria-hidden="true">✗</span>
+              }
+            </button>
+          }
+        </div>
+
+        @if (seleccion() !== null) {
+          <div class="feedback aparecer" [class.feedback--ok]="seleccion() === p.correcta" [class.feedback--ko]="seleccion() !== p.correcta">
+            <strong>{{ seleccion() === p.correcta ? '✓ ¡Correcto!' : '✗ Incorrecta.' }}</strong>
+            <p>{{ p.explicacion }}</p>
+          </div>
+          <div class="pregunta__acciones">
+            <button type="button" class="boton boton--primario" (click)="siguiente()">
+              {{ indice() + 1 < preguntas().length ? 'Siguiente →' : 'Ver resultados →' }}
+            </button>
+          </div>
+        }
+      </article>
+    </div>
+  }
+
+  <!-- ===================== RESULTADOS ===================== -->
+  @if (fase() === 'resultados') {
+    <div class="resultados aparecer">
+      <h1 class="titulo-pagina">Resultados</h1>
+
+      <div class="tarjeta marcador">
+        <div class="marcador__nota" [style.color]="mensajeNota().color">{{ nota() }}%</div>
+        <p class="marcador__detalle">{{ aciertos() }} de {{ preguntas().length }} aciertos</p>
+        <p class="marcador__mensaje">{{ mensajeNota().texto }}</p>
+        <div class="marcador__acciones">
+          <button type="button" class="boton boton--primario" (click)="empezar()">Repetir (mezcla nueva)</button>
+          @if (falladas().length > 0) {
+            <button type="button" class="boton boton--fantasma" (click)="repetirFalladas()">
+              Repasar solo las {{ falladas().length }} falladas
+            </button>
+          }
+          <button type="button" class="boton boton--fantasma" (click)="volverAConfig()">Cambiar configuración</button>
+        </div>
+      </div>
+
+      @if (falladas().length > 0) {
+        <h2 class="resultados__subtitulo">Repasa tus fallos</h2>
+        <div class="revision">
+          @for (f of falladas(); track f.pregunta.id) {
+            <article class="tarjeta fallo">
+              <p class="fallo__enunciado">{{ f.pregunta.enunciado }}</p>
+              <p class="fallo__tuya">✗ Tu respuesta: {{ f.pregunta.opciones[f.elegida] }}</p>
+              <p class="fallo__buena">✓ Correcta: {{ f.pregunta.opciones[f.pregunta.correcta] }}</p>
+              <p class="fallo__explicacion">{{ f.pregunta.explicacion }}</p>
+            </article>
+          }
+        </div>
+      } @else {
+        <p class="resultados__perfecto">🎉 Test perfecto: ningún fallo. Prueba con más preguntas o con el test global.</p>
+      }
+    </div>
+  }
+</div>
