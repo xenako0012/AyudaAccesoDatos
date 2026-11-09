@@ -1,0 +1,47 @@
+<div class="contenedor margen-pagina">
+  <h1 class="titulo-pagina aparecer">Temario</h1>
+  <p class="subtitulo-pagina">
+    El contenido oficial resumido para repasar: puntos clave, tablas de decisión,
+    fragmentos de código y los errores que más caen en examen.
+  </p>
+
+  @for (u of unidades; track u.id) {
+    <article class="tarjeta unidad unidad--{{ u.acento }} aparecer">
+      <header class="unidad__cabecera">
+        <div>
+          <div class="unidad__chips">
+            <span class="chip" [class.chip--cyan]="u.acento === 'cyan'" [class.chip--violet]="u.acento === 'violet'">{{ u.numero }}</span>
+            <span class="chip chip--green">{{ u.ra }}</span>
+          </div>
+          <h2 class="unidad__titulo">{{ u.titulo }}</h2>
+          <p class="unidad__ra">«{{ u.raTexto }}»</p>
+        </div>
+        <div class="unidad__acciones">
+          <a class="boton boton--primario" [routerLink]="['/temario', u.id]">Estudiar unidad</a>
+          <a class="boton boton--fantasma" [href]="u.pdfApuntes" target="_blank" rel="noopener">
+            ↓ Apuntes (PDF)
+          </a>
+        </div>
+      </header>
+
+      <div class="unidad__cuerpo">
+        <div class="unidad__ideas">
+          <h3>Las ideas clave, en una ojeada</h3>
+          <ol>
+            @for (idea of u.ideasClave; track idea) {
+              <li>{{ idea }}</li>
+            }
+          </ol>
+        </div>
+        <div class="unidad__ces">
+          <h3>Criterios de evaluación ({{ u.ces.length }})</h3>
+          <ul>
+            @for (ce of u.ces; track ce.codigo) {
+              <li><strong>{{ ce.codigo }}</strong> · {{ ce.texto }}</li>
+            }
+          </ul>
+        </div>
+      </div>
+    </article>
+  }
+</div>

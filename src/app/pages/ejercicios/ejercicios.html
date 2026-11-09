@@ -1,0 +1,66 @@
+<div class="contenedor margen-pagina">
+  <h1 class="titulo-pagina aparecer">Ejercicios de refuerzo</h1>
+  <p class="subtitulo-pagina">
+    Los ejercicios de cada bloque con las técnicas que debes dominar para resolverlos.
+    Cada solucionario oficial comentado está disponible en PDF.
+  </p>
+
+  <div class="filtros aparecer" role="group" aria-label="Filtrar por unidad">
+    <button type="button" class="chip-filtro" [class.seleccionado]="filtro() === 'todas'" (click)="filtro.set('todas')">Todas</button>
+    <button type="button" class="chip-filtro chip-filtro--cyan" [class.seleccionado]="filtro() === 'ut1'" (click)="filtro.set('ut1')">UT1 · Ficheros</button>
+    <button type="button" class="chip-filtro chip-filtro--violet" [class.seleccionado]="filtro() === 'ut2'" (click)="filtro.set('ut2')">UT2 · JDBC</button>
+  </div>
+
+  @for (grupo of bloques(); track grupo.bloque) {
+    <section class="grupo">
+      <h2 class="grupo__titulo">
+        <span class="chip" [class.chip--cyan]="grupo.unidad === 'ut1'" [class.chip--violet]="grupo.unidad === 'ut2'">
+          {{ grupo.unidad | uppercase }}
+        </span>
+        {{ grupo.bloque }}
+      </h2>
+
+      <div class="rejilla">
+        @for (e of grupo.lista; track e.id) {
+          <article class="tarjeta ejercicio aparecer">
+            <header class="ejercicio__cabecera">
+              <h3>{{ e.titulo }}</h3>
+              @if (e.duracion) {
+                <span class="chip chip--amber" title="Tiempo estimado">⏱ {{ e.duracion }}</span>
+              }
+            </header>
+            <p class="ejercicio__clase"><code>{{ e.clase }}</code></p>
+            <p class="ejercicio__descripcion">{{ e.descripcion }}</p>
+            <ul class="ejercicio__tecnicas">
+              @for (t of e.tecnicas; track t) {
+                <li>{{ t }}</li>
+              }
+            </ul>
+            <a class="ejercicio__pdf" [href]="e.pdfSolucion" target="_blank" rel="noopener">
+              Ver solucionario (PDF) ↗
+            </a>
+          </article>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- ===================== MATERIAL ORIGINAL ===================== -->
+  <section class="grupo">
+    <h2 class="grupo__titulo">📚 Material original descargable</h2>
+    <div class="docs">
+      @for (d of documentos; track d.ruta) {
+        <a class="tarjeta doc" [href]="d.ruta" target="_blank" rel="noopener">
+          <span class="doc__icono" aria-hidden="true">📄</span>
+          <span class="doc__cuerpo">
+            <strong>{{ d.nombre }}</strong>
+            <small>{{ d.descripcion }}</small>
+          </span>
+          <span class="chip" [class.chip--cyan]="d.unidad === 'ut1'" [class.chip--violet]="d.unidad === 'ut2'">
+            {{ d.tipo === 'apuntes' ? 'Apuntes' : 'Soluciones' }}
+          </span>
+        </a>
+      }
+    </div>
+  </section>
+</div>

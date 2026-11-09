@@ -1,0 +1,116 @@
+<div class="contenedor margen-pagina">
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero aparecer">
+    <div class="hero__texto">
+      <p class="hero__kicker">DAM 2º · Módulo 0486</p>
+      <h1 class="hero__titulo">
+        Repasa <span class="gradiente-texto">Acceso a Datos</span><br>
+        a tu ritmo
+      </h1>
+      <p class="hero__descripcion">
+        Temario resumido, tests con corrección al instante, flashcards y los ejercicios
+        con su solucionario oficial. Ficheros, XML, JDBC, MySQL y patrones de persistencia:
+        todo lo que cae en el examen, ordenado para repasar.
+      </p>
+      <div class="hero__acciones">
+        <a class="boton boton--primario" routerLink="/test">Empezar un test</a>
+        <a class="boton boton--fantasma" routerLink="/temario">Ver el temario</a>
+      </div>
+      <ul class="hero__stats" aria-label="Contenido disponible">
+        <li><strong>{{ unidades.length }}</strong> unidades</li>
+        <li><strong>{{ totalPreguntas }}</strong> preguntas</li>
+        <li><strong>{{ totalFlashcards }}</strong> flashcards</li>
+        <li><strong>{{ totalEjercicios }}</strong> ejercicios</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== UNIDADES ===================== -->
+  <section class="seccion">
+    <h2 class="seccion__titulo">Unidades didácticas</h2>
+    <div class="unidades">
+      @for (u of unidades; track u.id) {
+        <article class="tarjeta unidad unidad--{{ u.acento }}">
+          <header class="unidad__cabecera">
+            <span class="chip" [class.chip--cyan]="u.acento === 'cyan'" [class.chip--violet]="u.acento === 'violet'">{{ u.numero }}</span>
+            <span class="chip">{{ u.ra }}</span>
+            @if (mejorNotaDe(u.id) !== undefined) {
+              <span class="chip chip--green" title="Tu mejor nota en tests de esta unidad">✓ {{ mejorNotaDe(u.id) }}%</span>
+            }
+          </header>
+          <h3 class="unidad__titulo">{{ u.titulo }}</h3>
+          <p class="unidad__subtitulo">{{ u.subtitulo }}</p>
+
+          <ul class="unidad__bloques">
+            @for (b of u.bloques; track b.id) {
+              <li>{{ b.titulo }}</li>
+            }
+          </ul>
+
+          <footer class="unidad__pie">
+            <div class="unidad__meta">
+              <span>{{ preguntasDe(u.id) }} preguntas</span>
+              <span>·</span>
+              <span>{{ conocidasDe(u.id) }}/{{ flashcardsDe(u.id) }} flashcards</span>
+            </div>
+            <a class="unidad__enlace" [routerLink]="['/temario', u.id]">
+              Abrir temario →
+            </a>
+          </footer>
+        </article>
+      }
+    </div>
+  </section>
+
+  <!-- ===================== CÓMO REPASAR ===================== -->
+  <section class="seccion">
+    <h2 class="seccion__titulo">Tu ruta de repaso</h2>
+    <div class="ruta">
+      <a class="tarjeta paso" routerLink="/temario">
+        <span class="paso__num">1</span>
+        <h3>Lee el temario</h3>
+        <p>Cada unidad resumida en puntos clave, trampas típicas de examen y los fragmentos de código que debes saber escribir.</p>
+      </a>
+      <a class="tarjeta paso" routerLink="/flashcards">
+        <span class="paso__num">2</span>
+        <h3>Memoriza con flashcards</h3>
+        <p>Pregunta → respuesta. Marca las que ya dominas y quédate solo con las que te fallan.</p>
+      </a>
+      <a class="tarjeta paso" routerLink="/test">
+        <span class="paso__num">3</span>
+        <h3>Ponte a prueba</h3>
+        <p>Tests aleatorios por unidad o mezclados, con explicación en cada pregunta y seguimiento de tu mejor nota.</p>
+      </a>
+      <a class="tarjeta paso" routerLink="/ejercicios">
+        <span class="paso__num">4</span>
+        <h3>Practica de verdad</h3>
+        <p>Los ejercicios de cada bloque con las técnicas que debes aplicar y el solucionario oficial en PDF.</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- ===================== ÚLTIMA ACTIVIDAD ===================== -->
+  @if (hayProgreso()) {
+    <section class="seccion aparecer">
+      <div class="cabecera-fila">
+        <h2 class="seccion__titulo">Tu actividad reciente</h2>
+        <button type="button" class="boton boton--fantasma boton--mini" (click)="progreso.reiniciarTodo()">
+          Reiniciar progreso
+        </button>
+      </div>
+      <div class="tarjeta actividad">
+        @for (r of progreso.ultimosResultados(); track r.fecha) {
+          <div class="actividad__fila">
+            <span class="actividad__ambito">{{ r.ambito === 'todas' ? 'Test global' : r.ambito | uppercase }}</span>
+            <div class="actividad__barra">
+              <div class="actividad__relleno" [style.width.%]="(r.aciertos / r.total) * 100"></div>
+            </div>
+            <span class="actividad__nota">{{ r.aciertos }}/{{ r.total }}</span>
+            <span class="actividad__fecha">{{ r.fecha | date: 'd MMM · HH:mm' }}</span>
+          </div>
+        }
+      </div>
+    </section>
+  }
+</div>

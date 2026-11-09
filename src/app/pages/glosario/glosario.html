@@ -1,0 +1,39 @@
+<div class="contenedor margen-pagina glosario">
+  <h1 class="titulo-pagina aparecer">Glosario técnico</h1>
+  <p class="subtitulo-pagina">
+    Los términos que debes saber definir sin mirar. Busca por nombre o por cualquier palabra de la definición.
+  </p>
+
+  <div class="herramientas aparecer">
+    <label class="buscador">
+      <span aria-hidden="true">🔎</span>
+      <input type="search" placeholder="Buscar término… (p. ej. transient, pool, EOF)"
+             [value]="busqueda()" (input)="alEscribir($event)" aria-label="Buscar en el glosario">
+    </label>
+    <div class="filtros" role="group" aria-label="Filtrar por unidad">
+      <button type="button" class="chip-filtro" [class.seleccionado]="filtro() === 'todos'" (click)="filtro.set('todos')">Todos</button>
+      <button type="button" class="chip-filtro chip-filtro--cyan" [class.seleccionado]="filtro() === 'ut1'" (click)="filtro.set('ut1')">UT1</button>
+      <button type="button" class="chip-filtro chip-filtro--violet" [class.seleccionado]="filtro() === 'ut2'" (click)="filtro.set('ut2')">UT2</button>
+    </div>
+  </div>
+
+  <p class="recuento">{{ terminos().length }} término{{ terminos().length === 1 ? '' : 's' }}</p>
+
+  <div class="lista">
+    @for (t of terminos(); track t.termino) {
+      <article class="tarjeta termino aparecer">
+        <header>
+          <h2>{{ t.termino }}</h2>
+          <span class="chip" [class.chip--cyan]="t.unidad === 'ut1'" [class.chip--violet]="t.unidad === 'ut2'">
+            {{ t.unidad | uppercase }}
+          </span>
+        </header>
+        <p>{{ t.definicion }}</p>
+      </article>
+    } @empty {
+      <div class="tarjeta vacio">
+        <p>No hay términos que coincidan con «{{ busqueda() }}».</p>
+      </div>
+    }
+  </div>
+</div>
